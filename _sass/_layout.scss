@@ -28,3 +28,12 @@ header {
     margin-top: $padding-large-vertical / 2;
   }
 }
+
+footer {
+  @extend .text-muted;
+
+  padding-top: $padding-large-vertical;
+  padding-bottom: $padding-large-vertical;
+  margin-top: $navbar-margin-bottom;
+  border-top: 1px solid $navbar-default-border;
+}
