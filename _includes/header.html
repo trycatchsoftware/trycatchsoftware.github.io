@@ -2,19 +2,38 @@
   <p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
 <![endif]-->
 
-<header class="header">
-  <ul class="nav nav-pills pull-right">
-    <li class="{% if "/index.html" == page.url %}active{% endif %}"><a href="/">Home</a></li>
+<header>
+  <nav>
+    <div class="container">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#main-menu">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a href="/" class="navbar-brand">
+          <img src="/images/logo-horizontal.svg" class="logo" alt="Try Catch">
+        </a>
+      </div>
 
-    {% for link in site.pages %}
-      {% if link.title %}
-      <li class="{% if link.url == page.url %}active{% endif %}">
-        <a href="{{ link.url | prepend: site.baseurl }}">{{ link.title }}</a>
-      </li>
-      {% endif %}
-    {% endfor %}
+      <div id="main-menu" class="collapse navbar-collapse">
+        <ul class="menu">
+          <li class="{% if "/index.html" == page.url %}active{% endif %}">
+            <a href="/">Home</a>
+          </li>
 
-    <li><a href="mailto:tim@trycatchsoftware.co.uk">Contact</a></li>
-  </ul>
-  <a href="/"><img src="/images/logo-horizontal.png" class="logo" alt="Try Catch"></a>
+          {% for link in site.pages %}
+            {% if link.title %}
+            <li class="{% if link.url == page.url %}active{% endif %}">
+              <a href="{{ link.url | prepend: site.baseurl }}">{{ link.title }}</a>
+            </li>
+            {% endif %}
+          {% endfor %}
+
+          <li><a href="mailto:tim@trycatchsoftware.co.uk">Contact</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
 </header>
