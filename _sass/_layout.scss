@@ -13,19 +13,21 @@ header {
   nav {
     @extend .navbar, .navbar-default, .navbar-fixed-top;
 
+    .brand {
+      @extend .navbar-brand;
+
+      padding-top: $padding-base-vertical;
+      padding-bottom: $padding-base-vertical;
+
+      .logo {
+        height: $navbar-height - ($padding-large-vertical * 2);
+        margin-top: $padding-large-vertical / 2;
+      }
+    }
+
     .menu {
       @extend .nav, .navbar-nav, .navbar-right;
     }
-  }
-
-  .navbar-brand {
-    padding-top: $padding-base-vertical;
-    padding-bottom: $padding-base-vertical;
-  }
-
-  .logo {
-    height: $navbar-height - ($padding-large-vertical * 2);
-    margin-top: $padding-large-vertical / 2;
   }
 }
 
