@@ -6,7 +6,7 @@
 }
 
 body {
-  padding-top: $navbar-height + $navbar-margin-bottom + 1px;
+  padding-top: $navbar-height  + 1px;
 }
 
 header {
@@ -38,4 +38,10 @@ footer {
   padding-bottom: $padding-large-vertical;
   margin-top: $navbar-margin-bottom;
   border-top: 1px solid $navbar-default-border;
+}
+
+.jumbotron {
+  .container-fluid &, .container & {
+    border-radius: 0;
+  }
 }
