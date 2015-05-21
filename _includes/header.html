@@ -12,7 +12,7 @@
           <span class="icon-bar"></span>
           <span class="icon-bar"></span>
         </button>
-        
+
         <a href="/" class="brand">
           <img src="/images/logo-horizontal.svg" class="logo" alt="Try Catch">
         </a>
@@ -25,14 +25,12 @@
           </li>
 
           {% for link in site.pages %}
-            {% if link.title %}
+            {% if link.title and link.menu %}
             <li class="{% if link.url == page.url %}active{% endif %}">
               <a href="{{ link.url | prepend: site.baseurl }}">{{ link.title }}</a>
             </li>
             {% endif %}
           {% endfor %}
-
-          <li><a href="mailto:tim@trycatchsoftware.co.uk">Contact</a></li>
         </ul>
       </div>
     </div>
