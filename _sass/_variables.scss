@@ -1,8 +1,13 @@
+$brand-primary: #2880b9;
+$brand-primary-light: #3b96d2;
+$brand-primary-dark: #2c3e50;
+$brand-highlight: #e74d3c;
+
 $font-family-sans-serif: 'Open Sans', sans-serif;
 $headings-font-weight: 400;
 
 $navbar-height: 70px;
 $navbar-default-bg: #fff;
 
-$jumbotron-bg: #3498DB;
+$jumbotron-bg: $brand-primary-light;
 $jumbotron-color: #fff;

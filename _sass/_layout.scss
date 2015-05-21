@@ -34,10 +34,25 @@ header {
 footer {
   @extend .text-muted;
 
+  background-color: $brand-primary-dark;
+  color: white;
   padding-top: $padding-large-vertical;
   padding-bottom: $padding-large-vertical;
   margin-top: $navbar-margin-bottom;
   border-top: 1px solid $navbar-default-border;
+  -webkit-font-smoothing: antialiased;
+
+  a, a:focus, a:hover {
+    color: white;
+  }
+
+  h2:first-child {
+    margin-top: 15px;
+  }
+
+  small {
+    color: lighten($brand-primary-dark, 40%);
+  }
 }
 
 .jumbotron {
