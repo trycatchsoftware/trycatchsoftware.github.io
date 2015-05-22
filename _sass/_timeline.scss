@@ -12,9 +12,7 @@ Main components
 
 #cd-timeline {
   position: relative;
-  padding: 2em 0;
-  margin-top: 2em;
-  margin-bottom: 2em;
+  padding: 5em 0;
 
   &::before {
     /* this is the vertical line */
@@ -25,6 +23,12 @@ Main components
     height: 100%;
     width: 4px;
     background: $well-border;
+    background: -moz-linear-gradient(top, $well-border 0%, $well-border 5%, $well-border 95%, rgba($well-border,0) 100%);
+    background: -webkit-gradient(linear, left top, left bottom, color-stop(0%,rgba(30,87,153,1)), color-stop(100%,rgba(125,185,232,1)));
+    background: -webkit-linear-gradient(top, rgba($well-border,0) 0%, $well-border 5%, $well-border 95%, rgba($well-border,0) 100%);
+    background: -o-linear-gradient(top, rgba($well-border,0) 0%, $well-border 5%, $well-border 95%, rgba($well-border,0) 100%);
+    background: -ms-linear-gradient(top, rgba($well-border,0) 0%, $well-border 5%, $well-border 95%, rgba($well-border,0) 100%);
+    background: linear-gradient(to bottom, rgba($well-border,0) 0%, $well-border 5%, $well-border 95%, rgba($well-border,0) 100%);
   }
 }
 
@@ -95,9 +99,6 @@ Main components
 
 @media only screen and (min-width: 1170px) {
   #cd-timeline {
-    margin-top: 3em;
-    margin-bottom: 3em;
-
     &::before {
       left: 50%;
       margin-left: -2px;
