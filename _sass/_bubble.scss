@@ -1,0 +1,62 @@
+@mixin bubble($bubble-border-width) {
+  position: relative;
+  background: #fff;
+  border-radius: 10px;
+  border: $well-border solid $bubble-border-width;
+  padding: $padding-large-vertical * 2 $padding-large-horizontal 0 $padding-large-horizontal;
+  margin-bottom: $padding-large-vertical;
+
+  h1, h2, h3, h4, h5, h6 {
+    margin-top: 0;
+  }
+
+  &:after, &:before {
+    content: '';
+    position: absolute;
+    border-style: solid;
+    display: block;
+    width: 0;
+  }
+
+  &:after {
+    border-color: transparent $gray-lighter;
+    z-index: 1;
+    top: 13px + $bubble-border-width;
+    border-width: 20px 0;
+  }
+
+  &:before {
+    border-color: transparent $well-border;
+    z-index: 0;
+    top: 14px;
+    border-width: 19px + $bubble-border-width 0;
+  }
+}
+
+@mixin bubble-right($bubble-border-width) {
+  &:after {
+    border-right-width: 15px;
+    border-left-width: 0;
+    left: -15px;
+  }
+
+  &:before {
+    border-right-width: 14px + $bubble-border-width;
+    border-left-width: 0;
+    left: -13px - (2 * $bubble-border-width);
+  }
+}
+
+@mixin bubble-left($bubble-border-width) {
+  &:after {
+    border-left-width: 15px;
+    border-right-width: 0;
+    right: -15px;
+  }
+
+  &:before {
+    border-left-width: 14px + $bubble-border-width;
+    border-right-width: 0;
+    right: -13px - (2 * $bubble-border-width);
+  }
+}

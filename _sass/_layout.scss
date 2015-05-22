@@ -5,8 +5,19 @@
   padding: 0.2em 0;
 }
 
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
 body {
   padding-top: $navbar-height  + 1px;
+}
+
+h1, .h1,
+h2, .h2,
+h3, .h3 {
+  margin-bottom: $line-height-computed;
 }
 
 header {
@@ -48,6 +59,7 @@ footer {
 
   h2:first-child {
     margin-top: 15px;
+    margin-bottom: $padding-large-vertical;
   }
 
   small {
@@ -66,7 +78,7 @@ footer {
   margin-top: 0;
   color: #fff;
   padding-top: $line-height-computed / 2;
-  padding-bottom: $line-height-computed;
+  padding-bottom: $line-height-computed / 2;
 }
 
 .well {
