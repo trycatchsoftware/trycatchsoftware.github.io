@@ -1,12 +1,12 @@
 # Site settings
-title: Try Catch Software - Better software delivery
-email: tim@trycatchsoftware.co.uk
+title: IntroDev
+email: tom@introdev.co.uk
 description: > # this means to ignore newlines until "baseurl:"
   Helping software development teams be more effective through the careful
   use of agile project management, development best practices and clean
   software architecture.
 baseurl: "" # the subpath of your site, e.g. /blog/
-url: "http://trycatchsoftware.co.uk" # the base hostname & protocol for your site
+url: "http://introdev.co.uk" # the base hostname & protocol for your site
 twitter_username: jekyllrb
 github_username:  jekyll
 
