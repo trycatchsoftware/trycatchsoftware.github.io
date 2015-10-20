@@ -106,5 +106,32 @@ footer {
 .whatwedo {
   background-color: #039a88;
   color: white;
+  padding-top: $jumbotron-padding;
+  padding-bottom: $jumbotron-padding;
+  margin-top: $jumbotron-padding;
+  margin-bottom: $jumbotron-padding;
+}
 
+.number-xl {
+
+  font-size: 100px;
+  background-color: $brand-primary;
+  width: 100px;
+  border-radius: 50px;
+}
+
+.number-one {
+  background-color: $brand-primary;
+}
+
+.number-two {
+  background-color: $brand-highlight;
+}
+
+.number-three {
+  background-color: #039a88;
+}
+
+.text-xl {
+  font-size: 100px;
 }
