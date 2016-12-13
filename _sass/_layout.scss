@@ -42,7 +42,7 @@ header {
   }
 }
 
-footer {
+body > footer {
   @extend .text-muted;
 
   background-color: $brand-primary-dark;
@@ -91,4 +91,30 @@ footer {
 
 .icon {
   margin-top: $padding-large-vertical;
+}
+
+.client-logo {
+  @extend .pull-right;
+  margin-left: 10px;
+  margin-bottom: 10px;
+  width: 400px;
+
+  img {
+    width: 400px;
+  }
+
+}
+
+.panel {
+  margin-top: 25px;
+}
+
+.panel {
+  blockquote {
+    margin-left: 20px;
+  }
+}
+
+blockquote {
+  margin-top: 30px;
 }
