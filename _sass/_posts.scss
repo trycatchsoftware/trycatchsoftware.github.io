@@ -1,0 +1,45 @@
+.post-card {
+  @extend .panel;
+  @extend .panel-default;
+
+  a {
+    color: $panel-default-text;
+    transition: color 0.2s;
+
+    &:hover {
+      text-decoration: none;
+      color: lighten($panel-default-text, 20%);
+    }
+  }
+}
+
+.post-card-image {
+  @extend .panel-body;
+  background-color: $panel-default-heading-bg;
+  transition: opacity 0.2s;
+
+  &:hover {
+    opacity: 0.9;
+  }
+
+  img {
+    @extend .img-responsive;
+    transition: opacity 0.2s;
+
+    &:hover {
+      opacity: 0.9;
+    }
+  }
+}
+
+.post-card-title {
+  @extend .panel-footer;
+  background-color: $panel-bg;
+  padding: $padding-large-vertical * 2 $padding-base-horizontal;
+
+  h2 {
+    @extend h3;
+
+    margin: 0;
+  }
+}
