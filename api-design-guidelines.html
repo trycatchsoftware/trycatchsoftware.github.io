@@ -1,0 +1,1047 @@
+<html>
+  <head>
+    <title>API Design Guidelines</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body class="container">
+    <div class="gy-3 row">
+      <h1 class="display-1">API Design Guidelines</h1>
+
+      <section>
+        <h2>Introduction</h2>
+
+        <p>
+          All projects should have one or more RESTful APIs and should be
+          developed API first with a separate UI that consumes and interacts
+          with that API. The API should be designed in a consistent and
+          predictable way across all projects. These guidelines describe what we
+          mean by RESTful and provide patterns for how we solve design problems
+          in a RESTful way.
+        </p>
+      </section>
+
+      <section>
+        <h2>Resources &amp; Actions</h2>
+        <p>
+          RESTful APIs should be designed around the concepts of
+          <strong>resources</strong> and <strong>actions</strong>. Resources
+          should always be represented by URLs or endpoints and will nearly
+          always be nouns. Actions should always be represented by HTTP methods;
+          <code>HEAD</code>, <code>GET</code>, <code>POST</code>,
+          <code>PATCH</code>, <code>PUT</code> and <code>DELETE</code>. Actions
+          should always respond with a set of consistent response codes, headers
+          and optionally a response body. One of the skills in designing RESTful
+          APIs is determining the resources, names, actions and responses for a
+          particular use case and how to map that onto REST principles.
+        </p>
+        <p>
+          This document aims to cover many common use cases and patterns on how
+          they should be solved in a consistent and RESTful way. For further
+          guidance, the best resource I've found is the
+          <a
+            href="https://www.crummy.com/writing/RESTful-Web-Services/RESTful_Web_Services.pdf"
+            >O'Reilly book RESTful Web Services</a
+          >, particularly Chapters 4 and 5.
+        </p>
+      </section>
+
+      <section>
+        <h3 class="h4">HTTP Methods</h3>
+
+        <p>Generally, each HTTP method can be used in the following ways:</p>
+        <table class="table">
+          <tbody>
+            <tr>
+              <td>
+                <strong><code>HEAD</code></strong>
+              </td>
+              <td>
+                To check the existence of a resource without retrieving it
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong><code>GET</code></strong>
+              </td>
+              <td>To retrieve a list of items or an individual item's data</td>
+            </tr>
+            <tr>
+              <td>
+                <strong><code>POST</code></strong>
+              </td>
+              <td>
+                To create a new resource where ID is unknown or to trigger a
+                background process
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong><code>PATCH</code></strong>
+              </td>
+              <td>
+                To update part of the data for a resource without replacing the
+                whole thing
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong><code>PUT</code></strong>
+              </td>
+              <td>
+                To update all of the data for a resource, replacing the whole
+                thing
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <strong><code>DELETE</code></strong>
+              </td>
+              <td>To destroy a resource</td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h3 class="h4">Response Codes</h3>
+
+        <p>
+          While there are numerous HTTP response codes, there is a small subset
+          which should be used for responses to API calls. Many of these should
+          be automatically handled by framework code but it is useful to be
+          aware of them. For a full list of available codes see
+          <a href="http://en.wikipedia.org/wiki/List_of_HTTP_status_codes"
+            >http://en.wikipedia.org/wiki/List_of_HTTP_status_codes</a
+          >.
+        </p>
+
+        <table class="table">
+          <tbody>
+            <tr>
+              <td style="width: 30px"><strong>200</strong></td>
+              <td style="width: 116px"><strong>OK</strong></td>
+              <td style="width: 494px">
+                Mostly used for successful read or update requests
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 30px"><strong>201</strong></td>
+              <td style="width: 116px"><strong>Created</strong></td>
+              <td style="width: 494px">For successful create requests</td>
+            </tr>
+            <tr>
+              <td style="width: 30px"><strong>202</strong></td>
+              <td style="width: 116px"><strong>Accepted</strong></td>
+              <td style="width: 494px">
+                For accepted create requests that may be completed
+                asynchronously
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 30px"><strong>204</strong></td>
+              <td style="width: 116px"><strong>No Content</strong></td>
+              <td style="width: 494px">For delete requests</td>
+            </tr>
+            <tr>
+              <td style="width: 30px"><strong>301</strong></td>
+              <td style="width: 116px"><strong>Moved Permanently</strong></td>
+              <td style="width: 494px">
+                To point to a newly created or moved resource
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 30px"><strong>400</strong></td>
+              <td style="width: 116px"><strong>Bad Request</strong></td>
+              <td style="width: 494px">
+                For malformed requests where the error is with the client.
+                Generally this is a fallback where other 4xx errors are not
+                appropriate
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 30px"><strong>401</strong></td>
+              <td style="width: 116px"><strong>Unauthorized</strong></td>
+              <td style="width: 494px">
+                Authentication is required. Different to 403.
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 30px"><strong>402</strong></td>
+              <td style="width: 116px"><strong>Payment Required</strong></td>
+              <td style="width: 494px">
+                Can be useful when the client has exceeded a paid quota or their
+                license has expired.
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 30px"><strong>403</strong></td>
+              <td style="width: 116px"><strong>Forbidden</strong></td>
+              <td style="width: 494px">
+                The user is authenticated but they do not have permission to
+                perform the action
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 30px"><strong>404</strong></td>
+              <td style="width: 116px"><strong>Not Found</strong></td>
+              <td style="width: 494px">
+                For requests on non-existant resources
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 30px"><strong>405</strong></td>
+              <td style="width: 116px"><strong>Method Not Allowed</strong></td>
+              <td style="width: 494px">
+                The action is not supported for the requested resource
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 30px"><strong>409</strong></td>
+              <td style="width: 116px"><strong>Conflict</strong></td>
+              <td style="width: 494px">
+                Useful when versioning resources and the client is trying to
+                update an older version of the data.
+              </td>
+            </tr>
+            <tr>
+              <td style="width: 30px"><strong>422</strong></td>
+              <td style="width: 116px">
+                <strong>Unprocessable Entity</strong>
+              </td>
+              <td style="width: 494px">For validation errors</td>
+            </tr>
+            <tr>
+              <td style="width: 30px"><strong>429</strong></td>
+              <td style="width: 116px"><strong>Too Many Requests</strong></td>
+              <td style="width: 494px">Useful for request throttling</td>
+            </tr>
+            <tr>
+              <td style="width: 30px"><strong>500</strong></td>
+              <td style="width: 116px">
+                <strong>Internal Server Error</strong>
+              </td>
+              <td style="width: 494px">
+                Generic server error. This should ideally never happen in
+                production and should represent a bug
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section>
+        <h2>Versioning &amp; Formats</h2>
+
+        <p>
+          In order to support evolving APIs whilst maintaining backwards
+          compatibility, each API endpoint can support one or more versions and
+          formats.
+        </p>
+        <p>
+          Generally, a new version should only be created for an endpoint if it
+          is backwards incompatible with an existing version. This should be
+          avoided if at all possible and should be part of a bigger strategic
+          decision. Backwards compatibility should be the preferred approach.
+        </p>
+        <p>
+          By versioning APIs at the endpoint level client migrations can happen
+          on an individual endpoint basis and can happen more gradually allowing
+          new functionality to be used without rewriting the entire system.
+        </p>
+        <p>
+          A meta version called <code>latest</code> should always point to the
+          latest version of an API endpoint and should generally be used by our
+          own API clients and user interfaces.
+        </p>
+        <p>
+          APIs that can support multiple response types (e.g. HTML, JSON or CSV)
+          should do this through the <code>Accept</code> header in the request.
+        </p>
+        <ul>
+          <li>
+            To trigger the API an <code>Accept</code> header should be sent to
+            <code>application/vnd.%APPLICATION%.%VERSION%.json</code> where
+            <code>%VERSION%</code> is the API version number prepended by a 'v'
+            (e.g. <code>v1</code>) or <code>latest</code> to always use the
+            latest API version
+          </li>
+          <li>
+            Varying request types should be handled with different
+            <code>Accept</code> headers, e.g. <code>text/csv</code>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>URLs</h2>
+
+        <p>
+          As explained above, URLs should always represent resources and should
+          nearly always be nouns. URLs should not represent actions or verbs. On
+          the occasions where using verbs seems unavoidable, it is often useful
+          to convert the verb to a noun representing the object performing the
+          action. For example, a URL such as <code>/emails/1/send</code> would
+          be better represented as <code>/emails/1/sender</code> which would
+          accept a <code><code>POST</code></code> request.
+        </p>
+        <p>
+          A common pattern is to support both listing entities and retrieving
+          individual items. In this situation, it is best to pluralise the URL
+          preferring <code>/customers</code> for listing, and
+          <code>/customers/%id%</code> for getting individual items, over
+          <code>/customer</code> and <code>/customer/%id%</code> respectively.
+        </p>
+        <p>
+          Query strings should be used to filter and order entities and data.
+          Generally, if a URL is not a specific resource, then it should use
+          query strings instead. The sections below for listing and searching
+          should clarify this point.
+        </p>
+        <p>
+          It is natural to try and represent the hierarchical nature of entities
+          within URLs. For example <code>/customers/%id%/orders</code>. Through
+          experience, it is best to try and avoid these kinds of hierarchies in
+          URLs where possible as they often become very long and hard to work
+          with. They also reduce design flexibility later. Generally, a better
+          approach would be to have URLs for <code>/customers/%id%</code> and
+          <code>/orders</code> separately and support filtering orders by
+          customer through a query string, e.g.
+          <code>/orders?customer=%id%</code>.
+        </p>
+
+        <ul>
+          <li>
+            Favour plural nouns when representing entities that can be listed
+          </li>
+          <li>URLs should use dash-separated, lowercase paths</li>
+          <li>
+            Use query strings where URLs do not represent real resources (e.g.
+            for filtering, searching and pagination)
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Data Format</h2>
+
+        <p>
+          API responses and requests should generally be in JSON format. These
+          should more or less reflect the data stored on an individual entity.
+          Where entities refer to each other, these should be represented as
+          nested objects. They may also contain partial data from the nested
+          object. For example:
+        </p>
+        <pre class="bg-light p-3 my-3">
+{
+ "id": "123",
+ "name": "My order",
+ "customer": {
+    "id": "234",
+    "first_name": "John",
+    "last_name": "Smith"
+  }
+}</pre
+        >
+
+        <ul>
+          <li>Properties should be lowercase and use underscores</li>
+          <li>
+            Any links should be full URLs including the protocol and domain
+          </li>
+          <li>Dates should always be in ISO-8601 format (i.e. YYYY-MM-DD)</li>
+          <li>
+            Date times should always be in ISO-8601 format, be returned in UTC
+            but should also include the timezone fragment (e.g.
+            <code>2018-04-24T11:48:49Z</code>). Date times should not be used to
+            represent dates (don't use <code>2018-04-24T00:00:00Z</code> to
+            represent <code>2018-04-24</code>)
+          </li>
+          <li>
+            Monetary values should always be returned as integers (e.g. in
+            pence). These can be combined with other fields, such as currency to
+            fully represent the value.
+          </li>
+          <li>
+            Time and money formatting should be left to the client to implement
+            as this is display logic
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Validation Errors</h2>
+        <ul>
+          <li>Validation errors should be returned in JSON format</li>
+          <li>Validation should be returned with a 422 response code</li>
+          <li>
+            The structure of the validation data should mirror the data fields
+            on an entity
+          </li>
+          <li>
+            Each field should return an array of validation errors, even if
+            there is only one for that field
+          </li>
+          <li>
+            Validation data should be language agnostic, leaving translations so
+            be done on the client side. Validation types should be returned as a
+            code rather than a human-readable string.
+          </li>
+          <li>
+            The data should also contain extra meta information about the rule
+            where necessary. The exact structure of this will depend on the
+            rule.
+          </li>
+          <li>
+            Some common example codes are
+            <table class="table">
+              <thead>
+                <tr>
+                  <th>Code</th>
+                  <th>Structure</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><code>exists</code></td>
+                  <td>
+                    <pre class="bg-light p-3">
+{
+  "code": "exists"
+}
+</pre
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>minimum</code></td>
+                  <td>
+                    <pre class="bg-light p-3">
+{
+  "code": "minimum",
+  "minimum": 1
+}
+</pre
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>colour</code></td>
+                  <td>
+                    <pre class="bg-light p-3">
+{
+  "code": "colour",
+}
+</pre
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>image</code></td>
+                  <td>
+                    <pre class="bg-light p-3">
+{
+  "code": "image",
+  "types": [ "svg", "jpeg", "gif", "png" ]
+}
+</pre
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>integer</code></td>
+                  <td>
+                    <pre class="bg-light p-3">
+{
+  "code": "integer"
+}
+</pre
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>maximum</code></td>
+                  <td>
+                    <pre class="bg-light p-3">
+{
+  "code": "maximum",
+  "maximum" : 100
+}
+</pre
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>required</code><</td>
+                  <td>
+                    <pre class="bg-light p-3">
+{
+  "code": "required"
+}
+</pre
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>unique</code></td>
+                  <td>
+                    <pre class="bg-light p-3">
+{
+  "code": "unique_entity"
+}
+</pre
+                    >
+                  </td>
+                </tr>
+                <tr>
+                  <td><code>in</code></td>
+                  <td>
+                    <pre class="bg-light p-3">
+{
+  "code": "in",
+  "values": [ "red", "green", "blue" ]
+}
+</pre
+                    >
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </li>
+          <li>
+            An example validation message might be
+            <pre class="bg-light p-3 my-3">
+{
+  "first_name": [
+    { "code": "required" }
+  ],
+  "email": [
+    { "code": "email" },
+    { "code": "unique_entity" }
+  ],
+  "age": [
+    { "code": "minimum", "minimum": 18 }
+  ]
+}
+</pre
+            >
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Listing</h2>
+        <h3 class="h4">Request</h3>
+        <ul>
+          <li>Should use a <code>GET</code> request</li>
+          <li>
+            Should have a URL related to a collection (e.g.
+            <code>/contacts</code>)
+          </li>
+        </ul>
+        <h3 class="h4">Response</h3>
+        <ul>
+          <li>Should return a 200 response code</li>
+          <li>
+            Should return the list of matching entities in an object key called
+            <code>data</code>, e.g.
+            <pre class="bg-light p-3 my-3">
+{
+   "data": [
+     {
+        "name": "Item 1"
+     },
+     {
+        "name": "Item 2"
+     }...
+   ]
+}
+</pre
+            >
+          </li>
+        </ul>
+        <h3 class="h4">Pagination</h3>
+        <ul>
+          <li>Pagination should be achieved by changing query parameters</li>
+          <li>
+            The page of results to view should be signified by the
+            <code>page</code> query parameter
+          </li>
+          <li>
+            The number of items per page should default to 20 but it should be
+            possible to override this with the <code>per-page</code> query
+            parameter
+          </li>
+          <li>
+            Some endpoints might need to support returning all records. This
+            should only be if there are only ever going to be less than 50
+            records, otherwise it would be better to reconsider the UI that
+            requires it to perhaps support a search or AJAX loaded selection
+            process. In the case where this is still required, the per_page
+            property should be set to the string <code>all</code>.
+          </li>
+          <li>
+            The response for a paginated result set should include fields for
+            <code>total</code>, <code>per_page</code> and <code>page</code>. Any
+            other pagination fields or links are unnecessary and should not be
+            included. e.g.
+            <pre class="bg-light p-3 my-3">
+{
+   "total": 50,
+   "per_page": 15,
+   "page": 1,
+   "data":[
+        {
+            // Result Object
+        },
+        {
+            // Result Object
+        }
+   ]
+}
+</pre
+            >
+          </li>
+        </ul>
+        <h3 class="h4">Filtering</h3>
+        <ul>
+          <li>
+            Filtering of results should be achieved by changing query parameters
+          </li>
+          <li>
+            These will generally be named after fields from the data portion of
+            an entity
+          </li>
+          <li>
+            An example URL might be
+            <pre class="bg-light p-3 my-3">
+/users?first_name=ted&amp;last_name=hughes&amp;page=2</pre
+            >
+          </li>
+          <li>
+            Dates and monetary values in query strings should comply with the
+            same standards as in data formats
+          </li>
+          <li>
+            Relative dates (e.g. 'today' or 'last week') should use string
+            values that are compatible with the PHP relative date formats (<a
+              href="http://php.net/manual/en/datetime.formats.relative.php"
+              >http://php.net/manual/en/datetime.formats.relative.php</a
+            >)
+          </li>
+        </ul>
+        <h3 class="h4">Ordering</h3>
+        <ul>
+          <li>
+            Ordering of results should be achieved by changing query parameters
+          </li>
+          <li>
+            The field(s) to be ordered by should be under the
+            <code>order_by</code> query parameter and should be comma separated
+            if there are multiple. Most collections should have their own
+            default ordering.
+          </li>
+          <li>
+            The direction(s) to be ordered by should be under the
+            <code>direction</code> query parameter and should be comma separated
+            if there are multiple. The values for this should be either
+            <code>asc</code> or <code>desc</code>. The default
+            <code>direction</code> should be <code>asc</code>.
+          </li>
+          <li>
+            An example URL might be
+            <code>/users?order_by=username&amp;direction=asc</code>
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Getting</h2>
+        <h3 class="h4">Request</h3>
+        <ul>
+          <li>
+            Should use a <code><code>GET</code></code> request
+          </li>
+          <li>
+            Should have a URL denoting the entity within a collection (e.g.
+            <code>/contacts/123</code>)
+          </li>
+        </ul>
+        <h3 class="h4">Response</h3>
+        <ul>
+          <li>
+            Should return a 200 response code (or a 404 if the resource does not
+            exist)
+          </li>
+          <li>
+            Should return the entity data as a top-level JSON object, e.g.
+            <pre class="bg-light p-3 my-3">
+{
+ "id": "123",
+ "name": "My order",
+ "customer": {
+    "id": "234",
+    "first_name": "John",
+    "last_name": "Smith"
+  }
+}</pre
+            >
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Creating</h2>
+        <h3 class="h4">Request</h3>
+        <ul>
+          <li>
+            Should use a <code><code>POST</code></code> request (assuming the ID
+            is unknown prior to creation, a <code>PUT</code> should be used
+            otherwise)
+          </li>
+          <li>
+            Should have a URL related to a collection (e.g.
+            <code>/contacts</code>)
+          </li>
+          <li>
+            Should have a <code>Content-Type</code> header of
+            <code>application/json</code> and have JSON in the request body
+          </li>
+          <li>
+            When linking entities to other entities an object should be entered
+            on the field name with an ID property (consistent with the way
+            objects are returned when reading an API)
+          </li>
+          <li>
+            In the case where there is a single URL for multiple subtypes, a
+            <code>type</code> field should be used in the JSON body to determine
+            the subtype. This should be a human readable string that reflects
+            the user-facing terminology of the system.
+          </li>
+          <li>
+            An example request body might be:
+            <pre class="bg-light p-3 my-3">
+{
+  "type": "email",
+  "label": "Work",
+  "value": "test@test.com",
+  "user": {
+     "id": 123
+  }
+}
+</pre
+            >
+          </li>
+        </ul>
+
+        <h3 class="h4">Response</h3>
+        <ul>
+          <li>
+            Should return a 201 status code (or 422 in the case of a validation
+            error)
+          </li>
+          <li>
+            Should return a <code>Location</code> header pointing to the newly
+            created resource
+          </li>
+          <li>
+            Should have the JSON of the newly created entity in the response
+            body
+          </li>
+          <li>
+            Should return validation errors in the format described in the
+            validation section above
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Updating</h2>
+        <h3 class="h4">Request</h3>
+        <ul>
+          <li>
+            Should use a <code>PUT</code> request for full updates, and a
+            <code>PATCH</code>
+            request for partial updates (ideally, both should be supported)
+          </li>
+          <li>
+            Should have a URL related to the entity (e.g.
+            <code>/contacts/123</code>)
+          </li>
+          <li>
+            Should have a <code>Content-Type</code> header of
+            <code>application/json</code> and have JSON in the request body
+          </li>
+          <li>
+            When linking entities to other entities an object should be entered
+            on the field name with an ID property (consistent with the way
+            objects are returned when reading an API)
+          </li>
+          <li>
+            An example request body might be:
+            <pre class="bg-light p-3 my-3">
+{
+  "label": "Work",
+  "value": "test@test.com",
+  "user": {
+     "id": 123
+  }
+}</pre
+            >
+          </li>
+          <li></li>
+        </ul>
+        <h3 class="h4">Response</h3>
+        <ul>
+          <li>
+            Should return a 200 status code (or 422 in the case of a validation
+            error)
+          </li>
+          <li>
+            Should have the JSON of the updated entity in the response body
+          </li>
+          <li>
+            Should return validation errors in the format described in the
+            validation section above
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Deleting</h2>
+        <h3 class="h4">Request</h3>
+        <ul>
+          <li>Should use a <code>DELETE</code> request</li>
+          <li>
+            Should have a URL related to the entity (e.g.
+            <code>/contacts/123</code>)
+          </li>
+        </ul>
+        <h3 class="h4">Response</h3>
+        <ul>
+          <li>
+            Should return a 204 status code (or 404 if the resource could not be
+            found)
+          </li>
+        </ul>
+        <h3 class="h4">Soft Deletion</h3>
+        <ul>
+          <li>
+            When soft deleting entities they should be 'moved' into a special
+            collection which has its own endpoint (e.g.
+            <code>/contacts/deleted</code>)
+          </li>
+          <li>
+            If the resource is being soft-deleted the status code should be a
+            303 with a <code>Location</code> header of the new resource URL
+            (e.g. <code>/contacts/deleted/123</code>)
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Undeleting</h2>
+        <h3 class="h4">Request</h3>
+        <ul>
+          <li>Should use a <code>PUT</code> request</li>
+          <li>Should have no request body</li>
+          <li>
+            Should have a URL related to the soft-deleted entity (e.g.
+            <code>/contacts/deleted/123</code>)
+          </li>
+        </ul>
+        <h3 class="h4">Response</h3>
+        <ul>
+          <li>
+            Should return a 303 status code (or a 404 if the resource could not
+            be found in deleted items)
+          </li>
+          <li>
+            Should return a <code>Location</code> header of the undeleted
+            resource URL (e.g. <code>/contacts/123</code>)
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Merging</h2>
+        <h3 class="h4">Request</h3>
+        <ul>
+          <li>Should use a <code>POST</code> request</li>
+          <li>
+            Should have a URL related to a collection appended with
+            <code>/merger</code> (e.g. <code>/contacts/merger</code>)
+          </li>
+          <li>
+            The request body should contain JSON and denote the primary and
+            secondary records to be merged, e.g.
+            <pre class="bg-light p-3 my-3">
+{
+"primary": 123,
+"secondary": 456
+}
+</pre
+            >
+          </li>
+        </ul>
+
+        <h3 class="h4">Response</h3>
+        <ul>
+          <li>
+            Should return a 200 status code (or 422 in the case of a validation
+            error)
+          </li>
+          <li>
+            Should return a <code>Location</code> header pointing to the primary
+            entity URL
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Searching</h2>
+        <h3 class="h4">Request</h3>
+        <ul>
+          <li>
+            Whilst specific entity collections may support searching on
+            particular fields, it is fairly common to provide a global search
+            API endpoint
+          </li>
+          <li>Should be a <code>GET</code> request</li>
+          <li>Should have the URL <code>/search</code></li>
+          <li>
+            All parameters to the search should use query parameters, the main
+            query being <code>query</code> (e.g. <code>/search?query=joe</code>)
+          </li>
+          <li>Should support pagination in line with list requests</li>
+        </ul>
+        <h3 class="h4">Response</h3>
+        <ul>
+          <li>Should match the general response structure of list requests</li>
+          <li>
+            The individual records should be structured to allow for search
+            metadata so each item's data should be included in a
+            <code>data</code> key
+          </li>
+          <li>
+            Where multiple types of data are returned, a <code>type</code> field
+            should be used to denote the type
+          </li>
+          <li>
+            An example response might be:
+            <pre class="bg-light p-3 my-3">
+{
+   "total": 50,
+   "per_page": 15,
+   "current_page": 1,
+   "last_page": 4,
+   "from": 1,
+   "to": 15,
+   "data":[
+        {
+            "score": "1.58",
+            "match_field": "name",
+            "type": "event",
+            "data": {
+                // Result Object
+             }
+        },
+        {
+            "score": "0.5",
+            "match_field": "description",
+            "type": "contact",
+            "data": {
+                // Result Object
+             }
+        }
+   ]
+}
+</pre
+            >
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Bulk Actions</h2>
+        <h3 class="h4">Request</h3>
+        <ul>
+          <li>
+            Should use a <code>DELETE</code> or <code>PATCH</code> request
+            depending on whether a bulk delete or update is being performed
+          </li>
+          <li>
+            Should have the URL of the collection (e.g. <code>/contacts</code>)
+          </li>
+          <li>
+            The query string should be used to restrict the selection (as with
+            list requests - the capabilities should ideally match)
+          </li>
+          <li>
+            It might be necessary to push this request into a background job
+            (see more below)
+          </li>
+        </ul>
+        <h3 class="h4">Response</h3>
+        <ul>
+          <li>
+            Should return the relevant status code for either delete or update
+            operations (in the above sections), or a 202 status code in the case
+            of a background job
+          </li>
+          <li>
+            If a background job is used then a <code>Location</code> header
+            should be sent to get information on the background job
+          </li>
+          <li>
+            In the case of an update request, it should not be necessary to
+            return all affected entity data, however, it should return an object
+            describing how many affected records there were:
+            <pre class="bg-light p-3 my-3">
+{
+  "affected": 300
+}
+</pre
+            >
+          </li>
+        </ul>
+      </section>
+
+      <section>
+        <h2>Background Jobs</h2>
+        <h3 class="h4">Request</h3>
+        <ul>
+          <li>
+            Background jobs can be triggered through bulk actions above or
+            through executing a specific job
+          </li>
+          <li>
+            Jobs should provide an endpoint to track status/progress (e.g.
+            <code>/imports/1/progress</code>)
+          </li>
+          <li>
+            If not a bulk action then the expected request type should be a
+            <code>POST</code>
+          </li>
+          <li>
+            The URL will normally be a noun that represents the 'actor'
+            performing the request, (e.g. <code>/imports/1/previewer</code> or
+            <code>/imports/1/executor</code>
+          </li>
+        </ul>
+        <h3 class="h4">Response</h3>
+        <ul>
+          <li>Should return a 202 status code</li>
+          <li>
+            Should return a <code>Location</code> header that points to the
+            status endpoint for the job
+          </li>
+        </ul>
+      </section>
+    </div>
+  </body>
+</html>
