@@ -1,0 +1,331 @@
+<html>
+  <head>
+    <title>Database Migration Best Practices</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body class="container">
+    <div class="gy-3 row">
+      <h1 class="display-1">Database Migration Best Practices</h1>
+
+      <section>
+        <h2>Introduction</h2>
+
+        <p>
+          Database migrations are a way to make database schema changes in a
+          safe and predictable way. This article is not about implementing
+          database migrations with any specific tool or framework but will cover
+          best practices for how to design and run database migrations in
+          general.
+        </p>
+
+        <p>
+          Most of the points below refer to managing SQL databases since this is
+          what they are most commonly used for although a lot of them apply just
+          as well to any database technology.
+        </p>
+
+        <p>
+          <strong>Note:</strong> This article is about migrating the shape of
+          database schemas not about migrating data from one database instance
+          to another.
+        </p>
+      </section>
+
+      <section>
+        <h2 id="writing-migrations">Writing Migrations</h2>
+
+        <h3 id="up-down-migrations">Create Both Up &amp; Down Migrations</h3>
+        <p>
+          Most database migration tools have the concept of each migration
+          having both an 'up' and 'down' component. The 'up' component is used
+          to migrate the current database structure to a new state and the
+          'down' component is used to reverse those changes.
+        </p>
+
+        <p>
+          It's important to define both an 'up' and a 'down' component for every
+          migration. This has the following benefits:
+        </p>
+
+        <ul>
+          <li>
+            It's easy to rollback migrations that have just been deployed in
+            case something went wrong
+          </li>
+          <li>
+            It's easy to recreate the database structure from any point in your
+            application's history which can help with debugging
+          </li>
+          <li>
+            It forces you to think about whether you are making potentially
+            destructive changes
+          </li>
+        </ul>
+
+        <h3>Keep Migrations in Version Control</h3>
+
+        <p>
+          Version control your migrations alongside your code. It should be
+          possible to recreate the database structure at any commit in your
+          codebase's history such that the code will work with the database
+          structure defined in the migrations present in that commit.
+        </p>
+
+        <h3>Keep Migrations Small and Focused</h3>
+
+        <p>
+          As with all code, it's better to keep the changes applied by an
+          individual migration as small and focused as possible. This makes them
+          more predictable to apply and easier to roll back. If a feature
+          requires multiple unrelated changes to the database it's better to
+          split them into separate migrations even if they all get applied in a
+          single deployment.
+        </p>
+
+        <h3>Test Your Migrations</h3>
+
+        <p>
+          Always test your migrations on a non-production database before
+          running them in production. This gives you a chance to catch and fix
+          any issues before they affect your production data. You should test
+          both 'up' and 'down' migrations.
+        </p>
+
+        <h3>Avoid Long Running Migrations</h3>
+
+        <p>
+          Long-running migrations can lock your tables for the duration of the
+          migration, causing downtime. To avoid this, you can break up large
+          migrations into smaller ones that run in quick succession.
+        </p>
+
+        <p>
+          Some databases have features that can help with zero-downtime
+          migrations. For example, PostgreSQL has the
+          <code
+            ><a
+              href="https://www.postgresql.org/docs/current/sql-createindex.html#SQL-CREATEINDEX-CONCURRENTLY"
+              >CONCURRENTLY</a
+            ></code
+          >
+          keyword which allows you to add indexes without locking the table.
+          MySQL has the concept of
+          <a
+            href="https://dev.mysql.com/doc/refman/8.0/en/innodb-online-ddl-operations.html"
+            >online DDL operations</a
+          >.
+        </p>
+
+        <h3>Migrate Existing Data and Default Values</h3>
+
+        <p>
+          When creating migrations that change structure, make sure that
+          existing data is also taken into account in the migration. For
+          example, if converting a column from nullable to non-nullable, you
+          should provide a default value for the column so that existing rows
+          are not affected. Alternatively if moving a column from one table to
+          another, you should ensure that the data is copied over correctly as
+          part of the migration.
+        </p>
+
+        <h3>Don't Seed Data with Migrations</h3>
+
+        <p>
+          There is a difference between database migrations and database
+          seeders. Migrations control the structure of your database as well as
+          making sure any existing data is compatible with that new structure.
+          They are not responsible for adding new data into the database. This
+          is the job of seeders. Most migration tools have both the concept of
+          migrations and of seeders.
+        </p>
+
+        <p>
+          It's important to keep these two concerns separate. This makes it
+          easier to reason about the state of the database at any point in time
+          and makes it easier to recreate the database from scratch.
+        </p>
+
+        <h3 id="backward-forward-compatibility">
+          Backward &amp; Forward Compatibility
+        </h3>
+
+        <p>
+          When writing migrations it's important to consider the order that they
+          are run compared to any associated code changes being applied. Even in
+          the simplest deployment pipelines it's highly unlikely that the code
+          will be updated at exactly the same time as the database. In more
+          complex systems it might even be the case that different parts of the
+          code might be updated at different times, in a staggered or
+          'eventually consistent' approach, even if they all point to the same
+          database.
+        </p>
+
+        <p>
+          This means that there is a period of time where the database schema
+          might be in a state that is not compatible with the code that is
+          running against it. This can lead to errors, data corruption, or
+          unexpected behavior.
+        </p>
+
+        <p>
+          One way around this is to design your database migrations so that they
+          are <strong>backward compatible</strong>. In other words, both the
+          current version of the code and the new version of code will still
+          work after the migrations have run. You should follow this approach if
+          your migrations are run <strong>before</strong> the code is updated.
+        </p>
+
+        <p>
+          An alternative is to make your code
+          <strong>forward compatible</strong>. In other words, your code can
+          handle the database being in either its current structure or its new
+          structure. You should follow this approach if your migrations are run
+          <strong>after</strong> the code is updated.
+        </p>
+
+        <p>
+          Generally, it's much easier to make your migrations backward
+          compatible than to make your code forward compatible.
+        </p>
+
+        <h3>Stagger Destructive Changes</h3>
+
+        <p>
+          One approach to allow your database migrations to be backward
+          compatible is to stagger destructive changes.
+        </p>
+
+        <p>
+          Many changes are additive and are inherently backward compatible. Some
+          examples would be:
+        </p>
+
+        <ul>
+          <li>Adding a new table</li>
+          <li>Adding a new column to a table</li>
+          <li>
+            Increasing the capacity of a column's datatype (e.g. from
+            VARCHAR(25) to VARCHAR(255))
+          </li>
+        </ul>
+
+        <p>
+          However, some changes are destructive and are not backward compatible.
+          Some examples would be:
+        </p>
+
+        <ul>
+          <li>Dropping a table</li>
+          <li>Dropping a column</li>
+          <li>Renaming a column</li>
+          <li>Changing the type of a column</li>
+        </ul>
+
+        <p>
+          When making destructive changes, it's best to stagger them across
+          multiple migrations to maintain backward compatibility at all times.
+          For example, if you need to drop a column, you could have the
+          following set of individual deployments:
+        </p>
+
+        <ol>
+          <li>
+            Change the code to stop using the column meaning that no new data is
+            being written to it
+          </li>
+          <li>
+            Migrate the database to rename the column, indicating that it should
+            be considered deleted. This still gives the opportunity to rollback
+            the migration if needed using the 'down' migration.
+          </li>
+          <li>
+            Finally, permanently drop the column. This migration would
+            inherently have no 'down' migration.
+          </li>
+        </ol>
+
+        <p>
+          A similar set of separate deployments could be used to rename a
+          column:
+        </p>
+
+        <ol>
+          <li>
+            Create a migration that creates a column with the new name, leaving
+            the existing one as it is. Copy over the existing data to the new
+            column and use something like triggers to keep the new column data
+            in sync with the old.
+          </li>
+          <li>
+            Update the code to use the new column name instead of the old one
+          </li>
+          <li>
+            Drop the old column. This can still be rolled back by creating a
+            'down' migration that copies the newly named column back to the old
+            one. Any created triggers can also be removed at this point.
+          </li>
+        </ol>
+      </section>
+
+      <section>
+        <h2>Applying Migrations</h2>
+
+        <p>
+          Migrations should ideally be performed as part of an automated
+          deployment pipeline. The execution order compared to deploying code
+          changes should be considered and migrations and code changes should be
+          designed accordingly (see the section on
+          <a href="#backward-forward-compatibility"
+            >Backwards &amp; Forwards Compatibility</a
+          >).
+        </p>
+
+        <h3>Zero-Downtime Migrations</h3>
+
+        <p>
+          It should always be the aim to design database migrations so that they
+          can be deployed without application downtime. Following all of the
+          advice in the
+          <a href="#writing-migrations">Writing Migrations</a> section should go
+          a long way towards achieving this.
+        </p>
+
+        <h3>Database Backups</h3>
+
+        <p>
+          Even with the concept of 'down' migrations, it's still possible for
+          data corruption to occur and mistakes to be made. It's highly
+          advisable to take a backup of the database before running any
+          migrations, especially in production environments.
+        </p>
+
+        <h3>Rollbacks</h3>
+
+        <p>
+          There should be a documented and simple way to rollback any applied
+          database migrations. Most migration tools support this.
+        </p>
+      </section>
+
+      <section>
+        <h2>Managing Migrations</h2>
+
+        <h3>Squashing</h3>
+
+        <p>
+          As you build your application, you may accumulate more and more
+          migrations over time. This can lead to your codebase becoming bloated
+          with potentially hundreds of migrations. If you would like, you may
+          "squash" your migrations into a single SQL file. Many tools support
+          this feature but it should be considered that once squashed, it is not
+          possible to rollback to a specific migration before that point.
+        </p>
+      </section>
+    </div>
+  </body>
+</html>
